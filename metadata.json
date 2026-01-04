@@ -1,0 +1,7 @@
+{
+  "name": "DevSpotify Portfolio",
+  "description": "A high-fidelity Spotify-themed software developer portfolio featuring project playlists, technical skill tracks, and an AI-powered search assistant using Gemini.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
