@@ -27,37 +27,49 @@ export const PROJECTS: Project[] = [
     id: "1",
     title: "E-Commerce Titan",
     description: "A high-performance storefront built with Next.js and Stripe integration.",
-    tech: ["Next.js", "Tailwind", "Stripe"],
+    longDescription: "Titan is a next-generation e-commerce platform designed for massive scale. It features a custom-built headless CMS, lightning-fast edge rendering via Next.js, and a fully integrated global payment flow using Stripe's latest APIs. The architecture focuses on accessibility, performance (99+ Lighthouse scores), and seamless mobile experiences.",
+    tech: ["Next.js", "Tailwind", "Stripe", "PostgreSQL"],
     duration: "3:45",
-    imageUrl: "https://picsum.photos/id/1/300/300",
-    stars: 2400
+    imageUrl: "https://picsum.photos/id/1/600/600",
+    stars: 2400,
+    demoUrl: "https://example.com/demo1",
+    repoUrl: "https://github.com/alexjean/titan"
   },
   {
     id: "2",
     title: "AI Chat Interface",
     description: "Gemini-powered chatbot with real-time streaming and context awareness.",
-    tech: ["React", "Gemini API", "Socket.io"],
+    longDescription: "This advanced AI assistant leverages the Gemini Pro model to provide intelligent, context-aware responses in real-time. Built with a robust WebSocket layer for streaming text generation, it includes features like persistent conversation history, file attachment parsing, and custom persona configuration. Perfect for developers needing a plug-and-play AI interface.",
+    tech: ["React", "Gemini API", "Socket.io", "Node.js"],
     duration: "4:20",
-    imageUrl: "https://picsum.photos/id/2/300/300",
-    stars: 1800
+    imageUrl: "https://picsum.photos/id/2/600/600",
+    stars: 1800,
+    demoUrl: "https://example.com/demo2",
+    repoUrl: "https://github.com/alexjean/ai-chat"
   },
   {
     id: "3",
     title: "Crypto Dashboard",
     description: "Real-time visualization of market data using D3.js and WebSockets.",
-    tech: ["D3.js", "TypeScript", "Vite"],
+    longDescription: "A comprehensive financial dashboard that visualizes real-time cryptocurrency trends across multiple exchanges. Using high-performance D3.js rendering, the app handles thousands of data points per second with smooth transitions. It includes a custom technical analysis toolkit and personalized alert systems driven by background worker processes.",
+    tech: ["D3.js", "TypeScript", "Vite", "Redis"],
     duration: "2:15",
-    imageUrl: "https://picsum.photos/id/3/300/300",
-    stars: 950
+    imageUrl: "https://picsum.photos/id/3/600/600",
+    stars: 950,
+    demoUrl: "https://example.com/demo3",
+    repoUrl: "https://github.com/alexjean/crypto-dash"
   },
   {
     id: "4",
     title: "Social Media Engine",
     description: "Scalable backend architecture for a distributed social platform.",
-    tech: ["Node.js", "Redis", "PostgreSQL"],
+    longDescription: "The engine behind a distributed social network that handles millions of requests daily. It utilizes a microservices architecture with Redis for caching and pub/sub messaging. The system implements complex graph relationships for user feeds, high-concurrency notification delivery, and distributed asset storage with automated CDN purging.",
+    tech: ["Node.js", "Redis", "PostgreSQL", "Docker"],
     duration: "5:10",
-    imageUrl: "https://picsum.photos/id/4/300/300",
-    stars: 3200
+    imageUrl: "https://picsum.photos/id/4/600/600",
+    stars: 3200,
+    demoUrl: "https://example.com/demo4",
+    repoUrl: "https://github.com/alexjean/social-engine"
   }
 ];
 

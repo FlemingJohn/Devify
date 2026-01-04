@@ -3,11 +3,14 @@ export interface Project {
   id: string;
   title: string;
   description: string;
+  longDescription?: string;
   tech: string[];
   duration: string;
   imageUrl: string;
   link?: string;
   stars?: number;
+  demoUrl?: string;
+  repoUrl?: string;
 }
 
 export interface Experience {
