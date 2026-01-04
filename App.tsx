@@ -1,12 +1,203 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle2, MoreHorizontal, Play, UserCircle, Search, X, ChevronDown, Flag, Share2, SkipBack, SkipForward, Repeat, Shuffle, ArrowUp, ExternalLink, Github } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle2, MoreHorizontal, Play, UserCircle, Search, X, ChevronDown, Flag, Share2, SkipBack, SkipForward, Repeat, Shuffle, ArrowUp, ExternalLink, Github, Info } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import PlayerBar from './components/PlayerBar';
 import ProjectRow from './components/ProjectRow';
 import { askGeminiAboutDeveloper } from './services/geminiService';
 import { DEVELOPER_INFO, PROJECTS, EXPERIENCES, TECHNICAL_SKILLS } from './constants';
 import { Project, ViewType } from './types';
+
+// Moved outside to prevent recreation on every render
+const ProjectDetailsModal: React.FC<{ project: Project; onClose: () => void; onPlay: (p: Project) => void }> = ({ project, onClose, onPlay }) => {
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 animate-fade-in">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="relative bg-[#181818] w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row border border-white/5 animate-lyrics-appear">
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 p-2 bg-black/40 hover:bg-black/60 rounded-full text-white transition-colors"
+        >
+          <X size={24} />
+        </button>
+        
+        <div className="w-full md:w-2/5 aspect-square md:aspect-auto bg-[#282828]">
+          <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover" />
+        </div>
+        
+        <div className="flex-1 p-6 md:p-10 overflow-y-auto flex flex-col">
+          <div className="mb-8">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#1DB954] mb-2 block">Featured Project</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 leading-none">{project.title}</h2>
+            <p className="text-[#b3b3b3] font-medium">{project.tech.join(' • ')}</p>
+          </div>
+          
+          <div className="flex-1 mb-8">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-4">About the Project</h3>
+            <p className="text-lg text-white leading-relaxed font-light">
+              {project.longDescription || project.description}
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-4 mt-auto">
+            <button 
+              onClick={() => {
+                onPlay(project);
+                onClose();
+              }}
+              className="bg-[#1DB954] hover:scale-105 active:scale-95 text-black font-bold py-3 px-8 rounded-full transition-all flex items-center gap-2"
+            >
+              <Play size={20} fill="currentColor" />
+              Play Project
+            </button>
+            
+            {project.demoUrl && (
+              <a 
+                href={project.demoUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-transparent border border-[#b3b3b3] hover:border-white text-white font-bold py-3 px-6 rounded-full transition-all flex items-center gap-2"
+              >
+                <ExternalLink size={20} />
+                Live Demo
+              </a>
+            )}
+            
+            {project.repoUrl && (
+              <a 
+                href={project.repoUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-transparent border border-[#b3b3b3] hover:border-white text-white font-bold py-3 px-6 rounded-full transition-all flex items-center gap-2"
+              >
+                <Github size={20} />
+                Source Code
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LyricsView: React.FC<{ project: Project | null; setView: (v: ViewType) => void }> = ({ project, setView }) => {
+  if (!project) return null;
+  const lines = project.description.split('. ').filter(l => l.length > 0);
+
+  return (
+    <div className="absolute inset-0 z-[110] overflow-y-auto animate-lyrics-appear bg-[#8c6d3e] p-6 md:p-10 flex flex-col">
+      <div className="flex items-center justify-between mb-8 sticky top-0 bg-[#8c6d3e]/80 backdrop-blur-md py-2 z-10">
+        <button onClick={() => setView(ViewType.ARTIST)} className="p-2 hover:bg-black/10 rounded-full transition-colors">
+          <ChevronDown size={28} />
+        </button>
+        <div className="flex flex-col items-center text-center">
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Playing Project</span>
+          <span className="text-sm font-bold">{project.title}</span>
+          <span className="text-xs opacity-80">{DEVELOPER_INFO.name}</span>
+        </div>
+        <button className="p-2 hover:bg-black/10 rounded-full transition-colors">
+          <Flag size={20} />
+        </button>
+      </div>
+
+      <div className="flex-1 max-w-2xl mx-auto w-full pt-10">
+        <div className="space-y-6 md:space-y-10">
+          {lines.map((line, idx) => (
+            <p 
+              key={idx} 
+              className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-black leading-tight hover:opacity-70 transition-all cursor-default select-none"
+            >
+              {line}{line.endsWith('.') ? '' : '.'}
+            </p>
+          ))}
+        </div>
+        
+        <div className="mt-20 opacity-40 text-xs font-bold uppercase tracking-wider">
+          Licensed and provided by Devify Tech
+        </div>
+      </div>
+
+      <div className="sticky bottom-0 bg-gradient-to-t from-[#8c6d3e] to-transparent pt-10 pb-6 w-full max-w-2xl mx-auto">
+        <div className="w-full h-1 bg-black/20 rounded-full mb-4 relative overflow-hidden group cursor-pointer">
+          <div className="absolute left-0 top-0 bottom-0 bg-white w-1/3"></div>
+        </div>
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[10px] font-bold">1:24</span>
+          <span className="text-[10px] font-bold">{project.duration}</span>
+        </div>
+        <div className="flex items-center justify-around w-full max-w-sm mx-auto">
+           <Shuffle size={20} className="opacity-70" />
+           <SkipBack size={28} fill="currentColor" />
+           <div className="bg-white text-[#8c6d3e] p-5 rounded-full shadow-xl cursor-pointer hover:scale-105 active:scale-95 transition-transform">
+             <Play size={32} fill="currentColor" />
+           </div>
+           <SkipForward size={28} fill="currentColor" />
+           <Share2 size={20} className="opacity-70 cursor-pointer" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const BioView: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) => {
+  const bioLines = DEVELOPER_INFO.bio.split('. ').filter(l => l.length > 0);
+
+  return (
+    <div className="absolute inset-0 z-[110] overflow-y-auto animate-lyrics-appear bg-[#1e3264] p-6 md:p-10 flex flex-col">
+      <div className="flex items-center justify-between mb-8 sticky top-0 bg-[#1e3264]/80 backdrop-blur-md py-2 z-10">
+        <button onClick={() => setView(ViewType.ARTIST)} className="p-2 hover:bg-black/10 rounded-full transition-colors">
+          <ChevronDown size={28} />
+        </button>
+        <div className="flex flex-col items-center text-center">
+          <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Playing Story</span>
+          <span className="text-sm font-bold">About Me</span>
+          <span className="text-xs opacity-80">{DEVELOPER_INFO.name}</span>
+        </div>
+        <button className="p-2 hover:bg-black/10 rounded-full transition-colors">
+          <Info size={20} />
+        </button>
+      </div>
+
+      <div className="flex-1 max-w-2xl mx-auto w-full pt-10">
+        <div className="space-y-6 md:space-y-10">
+          <h2 className="text-4xl md:text-6xl font-black text-white mb-10 tracking-tighter">The Liner Notes.</h2>
+          {bioLines.map((line, idx) => (
+            <p 
+              key={idx} 
+              className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white/90 leading-tight hover:text-white transition-all cursor-default select-none"
+            >
+              {line}{line.endsWith('.') ? '' : '.'}
+            </p>
+          ))}
+        </div>
+        
+        <div className="mt-20 opacity-40 text-xs font-bold uppercase tracking-wider text-white">
+          Verified Developer Biography • {DEVELOPER_INFO.name}
+        </div>
+      </div>
+
+      <div className="sticky bottom-0 bg-gradient-to-t from-[#1e3264] to-transparent pt-10 pb-6 w-full max-w-2xl mx-auto">
+        <div className="w-full h-1 bg-white/20 rounded-full mb-4 relative overflow-hidden group cursor-pointer">
+          <div className="absolute left-0 top-0 bottom-0 bg-white w-2/3"></div>
+        </div>
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[10px] font-bold text-white">2:45</span>
+          <span className="text-[10px] font-bold text-white">4:00</span>
+        </div>
+        <div className="flex items-center justify-around w-full max-w-sm mx-auto text-white">
+           <Shuffle size={20} className="opacity-70" />
+           <SkipBack size={28} fill="currentColor" />
+           <div className="bg-white text-[#1e3264] p-5 rounded-full shadow-xl cursor-pointer hover:scale-105 active:scale-95 transition-transform">
+             <Play size={32} fill="currentColor" />
+           </div>
+           <SkipForward size={28} fill="currentColor" />
+           <Share2 size={20} className="opacity-70 cursor-pointer" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   const [currentView, setView] = useState<ViewType>(ViewType.ARTIST);
@@ -55,6 +246,16 @@ const App: React.FC = () => {
     setIsAiLoading(false);
   };
 
+  const playProject = (project: Project) => {
+    setActiveProject(project);
+    // Switch to lyrics view for immersion
+    setView(ViewType.LYRICS);
+  };
+
+  const showAboutMe = () => {
+    setView(ViewType.BIO);
+  };
+
   if (isLoading) {
     return (
       <div 
@@ -80,150 +281,15 @@ const App: React.FC = () => {
     );
   }
 
-  // Project Details Modal (Spotify "About" style)
-  const ProjectDetailsModal = ({ project, onClose }: { project: Project, onClose: () => void }) => {
-    return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300">
-        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
-        <div className="relative bg-[#181818] w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row border border-white/5">
-          <button 
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 bg-black/40 hover:bg-black/60 rounded-full text-white transition-colors"
-          >
-            <X size={24} />
-          </button>
-          
-          <div className="w-full md:w-2/5 aspect-square md:aspect-auto">
-            <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover" />
-          </div>
-          
-          <div className="flex-1 p-6 md:p-10 overflow-y-auto flex flex-col">
-            <div className="mb-8">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#1DB954] mb-2 block">Featured Project</span>
-              <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 leading-none">{project.title}</h2>
-              <p className="text-[#b3b3b3] font-medium">{project.tech.join(' • ')}</p>
-            </div>
-            
-            <div className="flex-1 mb-8">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-white/40 mb-4">About the Project</h3>
-              <p className="text-lg text-white leading-relaxed font-light">
-                {project.longDescription || project.description}
-              </p>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-4 mt-auto">
-              <button 
-                onClick={() => {
-                  setActiveProject(project);
-                  onClose();
-                }}
-                className="bg-[#1DB954] hover:scale-105 active:scale-95 text-black font-bold py-3 px-8 rounded-full transition-all flex items-center gap-2"
-              >
-                <Play size={20} fill="currentColor" />
-                Play Project
-              </button>
-              
-              {project.demoUrl && (
-                <a 
-                  href={project.demoUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-transparent border border-[#b3b3b3] hover:border-white text-white font-bold py-3 px-6 rounded-full transition-all flex items-center gap-2"
-                >
-                  <ExternalLink size={20} />
-                  Live Demo
-                </a>
-              )}
-              
-              {project.repoUrl && (
-                <a 
-                  href={project.repoUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-transparent border border-[#b3b3b3] hover:border-white text-white font-bold py-3 px-6 rounded-full transition-all flex items-center gap-2"
-                >
-                  <Github size={20} />
-                  Source Code
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Lyrics View Component (Updated to match provided image)
-  const LyricsView = ({ project }: { project: Project | null }) => {
-    if (!project) return null;
-    const lines = project.description.split('. ').filter(l => l.length > 0);
-
-    return (
-      <div className="absolute inset-0 z-[110] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 duration-500 bg-[#8c6d3e] p-6 md:p-10 flex flex-col">
-        {/* Top Header */}
-        <div className="flex items-center justify-between mb-8 sticky top-0 bg-[#8c6d3e]/80 backdrop-blur-md py-2 z-10">
-          <button onClick={() => setView(ViewType.ARTIST)} className="p-2 hover:bg-black/10 rounded-full transition-colors">
-            <ChevronDown size={28} />
-          </button>
-          <div className="flex flex-col items-center text-center">
-            <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">Playing Project</span>
-            <span className="text-sm font-bold">{project.title}</span>
-            <span className="text-xs opacity-80">{DEVELOPER_INFO.name}</span>
-          </div>
-          <button className="p-2 hover:bg-black/10 rounded-full transition-colors">
-            <Flag size={20} />
-          </button>
-        </div>
-
-        {/* Lyrics Content */}
-        <div className="flex-1 max-w-2xl mx-auto w-full pt-10">
-          <div className="space-y-6 md:space-y-10">
-            {lines.map((line, idx) => (
-              <p 
-                key={idx} 
-                className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tighter text-black leading-tight hover:opacity-70 transition-all cursor-default select-none"
-              >
-                {line}{line.endsWith('.') ? '' : '.'}
-              </p>
-            ))}
-          </div>
-          
-          <div className="mt-20 opacity-40 text-xs font-bold uppercase tracking-wider">
-            Licensed and provided by Devify Tech
-          </div>
-        </div>
-
-        {/* Bottom Playback (Mirrors Spotify Mobile) */}
-        <div className="sticky bottom-0 bg-gradient-to-t from-[#8c6d3e] to-transparent pt-10 pb-6 w-full max-w-2xl mx-auto">
-          <div className="w-full h-1 bg-black/20 rounded-full mb-4 relative overflow-hidden group cursor-pointer">
-            <div className="absolute left-0 top-0 bottom-0 bg-white w-1/3"></div>
-          </div>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-bold">1:24</span>
-            <span className="text-[10px] font-bold">{project.duration}</span>
-          </div>
-          <div className="flex items-center justify-around w-full max-w-sm mx-auto">
-             <Shuffle size={20} className="opacity-70" />
-             <SkipBack size={28} fill="currentColor" />
-             <div className="bg-white text-[#8c6d3e] p-5 rounded-full shadow-xl">
-               <Play size={32} fill="currentColor" />
-             </div>
-             <SkipForward size={28} fill="currentColor" />
-             <Share2 size={20} className="opacity-70" />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col h-screen bg-black overflow-hidden font-sans">
       <div className="flex flex-1 overflow-hidden">
         <Sidebar currentView={currentView} setView={setView} />
         
         <main className="flex-1 relative overflow-hidden flex flex-col">
-          {currentView === ViewType.LYRICS && <LyricsView project={activeProject} />}
-          {selectedProjectDetails && <ProjectDetailsModal project={selectedProjectDetails} onClose={() => setSelectedProjectDetails(null)} />}
+          {currentView === ViewType.LYRICS && <LyricsView project={activeProject} setView={setView} />}
+          {currentView === ViewType.BIO && <BioView setView={setView} />}
+          {selectedProjectDetails && <ProjectDetailsModal project={selectedProjectDetails} onClose={() => setSelectedProjectDetails(null)} onPlay={playProject} />}
 
           <header 
             className="absolute top-0 right-0 left-0 h-16 z-50 flex items-center justify-between px-8 transition-colors duration-300"
@@ -237,7 +303,7 @@ const App: React.FC = () => {
                 <ChevronRight size={24} />
               </button>
               {headerOpacity > 0.8 && (
-                <div className="flex items-center gap-2 animate-in fade-in duration-500">
+                <div className="flex items-center gap-2 animate-fade-in duration-500">
                     <span className="text-xl font-bold">{DEVELOPER_INFO.name}</span>
                 </div>
               )}
@@ -265,7 +331,8 @@ const App: React.FC = () => {
               <ArrowUp size={24} strokeWidth={3} />
             </button>
 
-            {currentView === ViewType.ARTIST && (
+            {/* View Mapping */}
+            {(currentView === ViewType.ARTIST || currentView === ViewType.HOME) && (
               <>
                 <div 
                   className="relative h-[400px] flex items-end p-8 bg-gradient-to-b from-[#404040] to-[#121212]"
@@ -284,13 +351,16 @@ const App: React.FC = () => {
                 <div className="p-8 bg-gradient-to-b from-[#121212] to-black">
                   <div className="flex items-center gap-8 mb-8">
                     <button 
-                      onClick={() => activeProject && setActiveProject(activeProject)}
+                      onClick={showAboutMe}
                       className="bg-[#1DB954] hover:scale-105 transition-transform p-4 rounded-full text-black shadow-lg"
                     >
                       <Play size={28} fill="currentColor" />
                     </button>
-                    <button className="border border-[#878787] hover:border-white hover:scale-105 text-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all">
-                      Contact
+                    <button 
+                      onClick={showAboutMe}
+                      className="border border-[#878787] hover:border-white hover:scale-105 text-white px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-all"
+                    >
+                      About
                     </button>
                     <MoreHorizontal size={32} className="text-[#b3b3b3] hover:text-white cursor-pointer transition-colors" />
                   </div>
@@ -304,7 +374,7 @@ const App: React.FC = () => {
                           key={project.id} 
                           index={idx} 
                           project={project} 
-                          onPlay={setActiveProject} 
+                          onPlay={playProject} 
                           isActive={activeProject?.id === project.id}
                         />
                       ))}
@@ -357,7 +427,7 @@ const App: React.FC = () => {
                                     <button 
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setActiveProject(project);
+                                        playProject(project);
                                       }}
                                       className={`absolute bottom-2 right-2 bg-[#1DB954] p-3 rounded-full text-black shadow-2xl opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 hover:scale-110 ${activeProject?.id === project.id ? 'opacity-100 translate-y-0' : ''}`}
                                     >
@@ -374,7 +444,10 @@ const App: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                     <div className="col-span-1 lg:col-span-2">
                         <h2 className="text-2xl font-bold mb-4">About</h2>
-                        <div className="relative group overflow-hidden rounded-lg aspect-video bg-[#282828] cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500">
+                        <div 
+                          onClick={showAboutMe}
+                          className="relative group overflow-hidden rounded-lg aspect-video bg-[#282828] cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500"
+                        >
                             <img src={DEVELOPER_INFO.profileImage} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" alt="Bio" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-10 flex flex-col justify-end">
                                 <p className="text-lg leading-relaxed font-medium mb-4 max-w-lg">
@@ -430,7 +503,7 @@ const App: React.FC = () => {
             )}
 
             {currentView === ViewType.SEARCH && (
-              <div className="p-8 pt-24">
+              <div className="p-8 pt-24 animate-fade-in">
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-4xl font-bold mb-8">AI Portfolio Search</h1>
                     <form onSubmit={handleSearch} className="relative group mb-8">
@@ -469,7 +542,7 @@ const App: React.FC = () => {
             )}
             
             {currentView === ViewType.LIBRARY && (
-                 <div className="p-8 pt-24">
+                 <div className="p-8 pt-24 animate-fade-in">
                      <h1 className="text-3xl font-bold mb-8">Your Library</h1>
                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                         {PROJECTS.map((project) => (
@@ -483,7 +556,7 @@ const App: React.FC = () => {
                                     <button 
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setActiveProject(project);
+                                        playProject(project);
                                       }}
                                       className={`absolute bottom-2 right-2 bg-[#1DB954] p-3 rounded-full text-black shadow-xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ${activeProject?.id === project.id ? 'opacity-100 translate-y-0' : ''}`}
                                     >

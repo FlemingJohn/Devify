@@ -27,5 +27,6 @@ export enum ViewType {
   SEARCH = 'SEARCH',
   LIBRARY = 'LIBRARY',
   ARTIST = 'ARTIST',
-  LYRICS = 'LYRICS'
+  LYRICS = 'LYRICS',
+  BIO = 'BIO'
 }
