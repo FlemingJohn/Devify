@@ -21,6 +21,13 @@ export interface Experience {
   period: string;
   description: string;
   imageUrl: string;
+  achievements: Achievement[];
+  color?: string;
+}
+
+export interface Achievement {
+  title: string;
+  impact: string; // e.g., "3:45" impact score or duration
 }
 
 export interface TourDate {
@@ -45,5 +52,6 @@ export enum ViewType {
   ARTIST = 'ARTIST',
   LYRICS = 'LYRICS',
   BIO = 'BIO',
-  WRAPPED = 'WRAPPED'
+  WRAPPED = 'WRAPPED',
+  DISCOGRAPHY = 'DISCOGRAPHY'
 }
