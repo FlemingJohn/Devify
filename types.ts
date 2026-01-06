@@ -11,6 +11,7 @@ export interface Project {
   stars?: number;
   demoUrl?: string;
   repoUrl?: string;
+  color?: string;
 }
 
 export interface Experience {
@@ -22,11 +23,27 @@ export interface Experience {
   imageUrl: string;
 }
 
+export interface TourDate {
+  date: string;
+  event: string;
+  location: string;
+  link: string;
+}
+
+export interface MerchItem {
+  id: string;
+  name: string;
+  type: string;
+  imageUrl: string;
+  price: string;
+}
+
 export enum ViewType {
   HOME = 'HOME',
   SEARCH = 'SEARCH',
   LIBRARY = 'LIBRARY',
   ARTIST = 'ARTIST',
   LYRICS = 'LYRICS',
-  BIO = 'BIO'
+  BIO = 'BIO',
+  WRAPPED = 'WRAPPED'
 }

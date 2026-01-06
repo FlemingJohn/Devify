@@ -36,6 +36,11 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
+        @keyframes wave-bounce {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+
         .animate-spotify-intro {
             animation: spotify-intro 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -46,6 +51,10 @@
 
         .animate-lyrics-appear {
             animation: slide-up-fade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .visualizer-bar {
+            animation: wave-bounce 0.6s ease-in-out infinite;
         }
 
         ::-webkit-scrollbar {

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home, Search, Library, PlusSquare, Heart, Bookmark } from 'lucide-react';
+import { Home, Search, Library, PlusSquare, Heart, Bookmark, Sparkles } from 'lucide-react';
 import { ViewType } from '../types';
 
 interface SidebarProps {
@@ -35,6 +35,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
         <NavItem icon={Home} label="Home" view={ViewType.HOME} />
         <NavItem icon={Search} label="Search" view={ViewType.SEARCH} />
         <NavItem icon={Library} label="Your Library" view={ViewType.LIBRARY} />
+        <button
+          onClick={() => setView(ViewType.WRAPPED)}
+          className={`flex items-center gap-4 px-6 py-2 mt-4 transition-all duration-300 w-full text-left group
+            ${currentView === ViewType.WRAPPED ? 'text-white' : 'text-[#b3b3b3] hover:text-white'}`}
+        >
+          <div className="bg-gradient-to-tr from-[#ff00d4] to-[#00f2ff] p-1 rounded shadow-lg group-hover:scale-110 transition-transform">
+            <Sparkles size={16} className="text-white" />
+          </div>
+          <span className="font-bold text-sm">2024 Wrapped</span>
+        </button>
       </nav>
 
       <div className="px-6 mb-4">
@@ -50,12 +60,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
           </div>
           <span className="font-bold text-sm">Liked Songs</span>
         </button>
-        <button className="flex items-center gap-4 text-[#b3b3b3] hover:text-white transition-colors duration-200 py-2 w-full">
-          <div className="bg-[#006450] p-1 rounded-sm text-[#1DB954]">
-            <Bookmark size={16} fill="currentColor" />
-          </div>
-          <span className="font-bold text-sm">Your Episodes</span>
-        </button>
       </div>
 
       <div className="border-t border-[#282828] mx-6 py-4 overflow-y-auto flex-1">
@@ -65,7 +69,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView }) => {
           <li className="hover:text-white cursor-pointer">Backend Grooves</li>
           <li className="hover:text-white cursor-pointer">Open Source Hits</li>
           <li className="hover:text-white cursor-pointer">Design Systems Vol.1</li>
-          <li className="hover:text-white cursor-pointer">Legacy Code Ballads</li>
         </ul>
       </div>
     </div>
