@@ -1,6 +1,6 @@
 
-import { Project, Experience, TourDate, MerchItem } from './types';
-import { Code2, Database, Globe, Layers, Cpu, Smartphone, Cloud, Terminal } from 'lucide-react';
+import { Project, Experience, TourDate, MerchItem, Hackathon, SocialLink, GlobalAchievement } from './types';
+import { Code2, Database, Globe, Layers, Cpu, Smartphone, Cloud, Terminal, Github, Linkedin, Twitter, MessageSquare, Award, Star, ShieldCheck, Zap, Disc, Mic2, Music, Trophy } from 'lucide-react';
 
 export const DEVELOPER_INFO = {
   name: "Alex Jean",
@@ -14,6 +14,48 @@ export const DEVELOPER_INFO = {
     comment: "My latest work on high-scale commerce. Pushing the boundaries of Next.js performance!"
   }
 };
+
+export const SOCIAL_LINKS: SocialLink[] = [
+  { platform: "GitHub", url: "https://github.com", icon: Github },
+  { platform: "LinkedIn", url: "https://linkedin.com", icon: Linkedin },
+  { platform: "Twitter", url: "https://twitter.com", icon: Twitter },
+  { platform: "Discord", url: "https://discord.com", icon: MessageSquare }
+];
+
+export const GLOBAL_ACHIEVEMENTS: GlobalAchievement[] = [
+  {
+    id: "a1",
+    title: "Global Tour Pass (AWS Certified)",
+    issuer: "Amazon Web Services",
+    date: "2024",
+    icon: Globe,
+    description: "Certified to architect and scale distributed systems on the global stage."
+  },
+  {
+    id: "a2",
+    title: "Legacy Recording (Arctic Code Vault)",
+    issuer: "GitHub",
+    date: "2020",
+    icon: Disc,
+    description: "Codebase preserved in the 'Hall of Fame' vault for 1,000 years."
+  },
+  {
+    id: "a3",
+    title: "Diamond Streamer (Top 1% Contributor)",
+    issuer: "Stack Overflow",
+    date: "2023",
+    icon: Trophy,
+    description: "Consistent high-performance support for the global developer community."
+  },
+  {
+    id: "a4",
+    title: "Platinum Producer (Open Source Advocate)",
+    issuer: "Meta Open Source",
+    date: "2022",
+    icon: Star,
+    description: "Hit status for significant contributions to core industry frameworks."
+  }
+];
 
 export const TOUR_DATES: TourDate[] = [
   { date: "NOW", event: "Available for Hire", location: "Global / Remote", link: "mailto:alex@example.com" },
@@ -68,6 +110,36 @@ export const EXPERIENCES: Experience[] = [
       { title: "Migrated legacy jQuery code to modern React", impact: "Modern" },
       { title: "Fixed over 200+ bug tickets in 6 months", impact: "Stable" }
     ]
+  }
+];
+
+export const HACKATHONS: Hackathon[] = [
+  {
+    id: "h1",
+    name: "Global AI Hack",
+    award: "1st Place Winner",
+    projectBuilt: "NeuralSync",
+    date: "2024",
+    imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=400&auto=format&fit=crop",
+    color: "#1DB954"
+  },
+  {
+    id: "h2",
+    name: "Chainlink Spring",
+    award: "Best DeFi Tool",
+    projectBuilt: "VaultGuard",
+    date: "2023",
+    imageUrl: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=400&auto=format&fit=crop",
+    color: "#3d91f4"
+  },
+  {
+    id: "h3",
+    name: "HackMIT",
+    award: "Top 10 Finalist",
+    projectBuilt: "EduGraph",
+    date: "2023",
+    imageUrl: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=400&auto=format&fit=crop",
+    color: "#f573a0"
   }
 ];
 

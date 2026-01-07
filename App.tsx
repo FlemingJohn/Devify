@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, CheckCircle2, MoreHorizontal, Play, UserCircle, Search as SearchIcon, X, Share2, Trophy, Sparkles, History, Clock, Mic2, MapPin, ExternalLink, Volume2, ShoppingBag, Calendar, ListMusic, Info, Heart, ArrowRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle2, MoreHorizontal, Play, UserCircle, Search as SearchIcon, X, Share2, Trophy, Sparkles, History, Clock, Mic2, MapPin, ExternalLink, Volume2, ShoppingBag, Calendar, ListMusic, Info, Heart, ArrowRight, Zap, Star } from 'lucide-react';
 import { GoogleGenAI, Modality } from "@google/genai";
 import Sidebar from './components/Sidebar';
 import PlayerBar from './components/PlayerBar';
 import ProjectRow from './components/ProjectRow';
-import { DEVELOPER_INFO, PROJECTS, TECHNICAL_SKILLS, TOUR_DATES, MERCH, EXPERIENCES } from './constants';
-import { Project, Experience, ViewType } from './types';
+import { DEVELOPER_INFO, PROJECTS, TECHNICAL_SKILLS, TOUR_DATES, MERCH, EXPERIENCES, HACKATHONS, SOCIAL_LINKS, GLOBAL_ACHIEVEMENTS } from './constants';
+import { Project, Experience, ViewType, Hackathon } from './types';
 import { askGeminiAboutDeveloper } from './services/geminiService';
 
 const RECENTLY_PLAYED_KEY = 'devify_recently_played';
@@ -357,9 +357,19 @@ const App: React.FC = () => {
               <button className="bg-black/70 p-1.5 rounded-full text-white/50 hover:text-white transition-colors"><ChevronLeft size={20} /></button>
               <button className="bg-black/70 p-1.5 rounded-full text-white/50 hover:text-white transition-colors hidden sm:block"><ChevronRight size={20} /></button>
             </div>
-            <div className="flex items-center gap-2 bg-black/70 hover:bg-[#282828] transition-colors p-[2px] pr-2 rounded-full cursor-pointer">
-              <img src={DEVELOPER_INFO.profileImage} className="w-6 h-6 md:w-7 md:h-7 rounded-full object-cover" />
-              <span className="text-xs md:text-sm font-bold truncate max-w-[80px] sm:max-w-none">{DEVELOPER_INFO.name}</span>
+            
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                {SOCIAL_LINKS.map(link => (
+                  <a key={link.platform} href={link.url} target="_blank" rel="noreferrer" className="text-[#b3b3b3] hover:text-white transition-all hover:scale-110" title={link.platform}>
+                    <link.icon size={18} />
+                  </a>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 bg-black/70 hover:bg-[#282828] transition-colors p-[2px] pr-2 rounded-full cursor-pointer">
+                <img src={DEVELOPER_INFO.profileImage} className="w-6 h-6 md:w-7 md:h-7 rounded-full object-cover" />
+                <span className="text-xs md:text-sm font-bold truncate max-w-[80px] sm:max-w-none">{DEVELOPER_INFO.name}</span>
+              </div>
             </div>
           </header>
 
@@ -430,6 +440,55 @@ const App: React.FC = () => {
                           </div>
                           <p className="font-bold text-sm md:text-base truncate group-hover:text-[#1DB954] transition-colors duration-300">{exp.company}</p>
                           <p className="text-[10px] md:text-sm text-[#b3b3b3]">{exp.period} • Album</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Global Achievements - Updated Section */}
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Platinum Accolades</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                      {GLOBAL_ACHIEVEMENTS.map(ach => (
+                        <div 
+                          key={ach.id} 
+                          className="flex items-center gap-4 p-4 rounded-lg bg-gradient-to-r from-white/5 to-transparent border border-white/5 hover:bg-white/10 transition-all group"
+                        >
+                          <div className="bg-[#1DB954]/10 p-3 rounded-lg text-[#1DB954] group-hover:scale-110 transition-transform">
+                             <ach.icon size={24} />
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-bold text-sm md:text-base truncate text-white">{ach.title}</span>
+                            <span className="text-[10px] text-[#b3b3b3] uppercase font-black tracking-widest">{ach.issuer} • {ach.date}</span>
+                            <p className="text-[10px] text-[#b3b3b3] mt-1 line-clamp-1">{ach.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Hackathons - Appears On / Collaborative Compilations */}
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Appears On (Hackathons)</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+                      {HACKATHONS.map(hack => (
+                        <div 
+                          key={hack.id} 
+                          className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] cursor-pointer group transition-all duration-300"
+                        >
+                          <div className="relative mb-3 md:mb-4 overflow-hidden rounded-md">
+                            <img 
+                              src={hack.imageUrl} 
+                              className="aspect-square rounded-md shadow-xl mb-0 object-cover group-hover:scale-105 transition-transform duration-500" 
+                              alt={hack.name}
+                            />
+                            <div className="absolute top-2 left-2 bg-[#1DB954]/90 backdrop-blur-sm p-1.5 rounded-full text-black shadow-lg">
+                              <Zap size={14} fill="black" />
+                            </div>
+                          </div>
+                          <p className="font-bold text-sm md:text-base truncate">{hack.name}</p>
+                          <p className="text-[10px] md:text-sm text-[#b3b3b3] truncate">{hack.projectBuilt}</p>
+                          <p className="text-[10px] md:text-xs font-bold text-[#1DB954] mt-1 uppercase tracking-wider">{hack.award || 'Participant'}</p>
                         </div>
                       ))}
                     </div>

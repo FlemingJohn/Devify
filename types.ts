@@ -21,13 +21,38 @@ export interface Experience {
   period: string;
   description: string;
   imageUrl: string;
-  achievements: Achievement[];
+  achievements: ExperienceAchievement[];
   color?: string;
 }
 
-export interface Achievement {
+export interface ExperienceAchievement {
   title: string;
   impact: string; // e.g., "3:45" impact score or duration
+}
+
+export interface GlobalAchievement {
+  id: string;
+  title: string;
+  issuer: string;
+  date: string;
+  icon: any;
+  description: string;
+}
+
+export interface SocialLink {
+  platform: string;
+  url: string;
+  icon: any;
+}
+
+export interface Hackathon {
+  id: string;
+  name: string;
+  award?: string;
+  projectBuilt: string;
+  date: string;
+  imageUrl: string;
+  color?: string;
 }
 
 export interface TourDate {
