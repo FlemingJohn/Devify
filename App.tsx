@@ -127,7 +127,7 @@ const LyricsView: React.FC<{ project: Project | null; setView: (v: ViewType) => 
         </div>
       </div>
       <button onClick={() => setView(ViewType.ARTIST)} className="fixed top-4 right-4 md:top-8 md:right-8 z-[160] p-2 md:p-3 bg-black/20 hover:bg-black/40 rounded-full text-white transition-colors">
-        <X className="w-8 h-8 md:w-12 md:h-12" />
+        <X className="w-8 h-8 md:w-10 md:h-10" />
       </button>
     </div>
   );
@@ -151,7 +151,7 @@ const WrappedView: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) 
   return (
     <div className="absolute inset-0 z-[200] flex flex-col items-center justify-center p-6 md:p-8 transition-all duration-1000 spotify-ease overflow-hidden" style={{ background: backgrounds[step] }}>
       <button onClick={() => setView(ViewType.HOME)} className="absolute top-4 right-4 md:top-8 md:right-8 z-[210] p-2 hover:bg-white/10 rounded-full text-white transition-colors">
-        <X className="w-8 h-8 md:w-12 md:h-12" />
+        <X className="w-8 h-8 md:w-10 md:h-10" />
       </button>
       <div className="w-full max-w-4xl flex flex-col items-center text-center animate-lyrics-appear">
         {step === 0 && (
@@ -174,7 +174,7 @@ const WrappedView: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) 
             <div className="relative group">
               <img src={stats.topProject.imageUrl} className="w-48 h-48 md:w-80 md:h-80 rounded-lg shadow-2xl mb-4 md:mb-6 border-4 border-white/20 object-cover" alt="Top Project" />
               <div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-[#1DB954] p-3 md:p-4 rounded-full shadow-xl">
-                <Trophy className="text-white w-8 h-8 md:w-12 md:h-12" />
+                <Trophy className="text-white w-6 h-6 md:w-10 md:h-10" />
               </div>
             </div>
             <div>
@@ -373,9 +373,9 @@ const App: React.FC = () => {
                             <CheckCircle2 size={18} className="text-[#3d91f4]" fill="white" />
                             <span className="text-[10px] md:text-sm font-medium">Verified Developer</span>
                         </div>
-                        <button onClick={handlePlayGreeting} className={`flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all ${isPlayingTTS ? 'animate-pulse text-[#1DB954]' : ''}`}>
-                            <Volume2 size={14} className="md:size-16" />
-                            <span className="text-[9px] md:text-xs font-bold uppercase tracking-wider">{isPlayingTTS ? 'Speaking...' : 'Listen'}</span>
+                        <button onClick={handlePlayGreeting} className={`flex items-center gap-2 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all ${isPlayingTTS ? 'animate-pulse text-[#1DB954]' : ''}`}>
+                            <Volume2 className="w-3 h-3 md:w-4 md:h-4" />
+                            <span className="text-[8px] md:text-xs font-bold uppercase tracking-wider">{isPlayingTTS ? 'Speaking...' : 'Listen'}</span>
                         </button>
                     </div>
                     <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-2 md:mb-4 leading-none">{DEVELOPER_INFO.name}</h1>
