@@ -96,7 +96,7 @@ const SearchView: React.FC = () => {
         {TECHNICAL_SKILLS.map(skill => (
           <div key={skill.name} className="aspect-square relative rounded-lg overflow-hidden cursor-pointer group" style={{ backgroundColor: skill.color }}>
              <h3 className="absolute top-3 left-3 md:top-4 md:left-4 text-xl md:text-2xl font-black text-white">{skill.name}</h3>
-             <skill.icon size={48} className="absolute bottom-[-5%] right-[-5%] rotate-[25deg] text-white/20 group-hover:scale-110 transition-transform md:size-16" />
+             <skill.icon size={48} className="absolute bottom-[-5%] right-[-5%] rotate-[25deg] text-white/20 group-hover:scale-110 transition-transform md:w-16 md:h-16" />
           </div>
         ))}
       </div>
@@ -127,7 +127,7 @@ const LyricsView: React.FC<{ project: Project | null; setView: (v: ViewType) => 
         </div>
       </div>
       <button onClick={() => setView(ViewType.ARTIST)} className="fixed top-4 right-4 md:top-8 md:right-8 z-[160] p-2 md:p-3 bg-black/20 hover:bg-black/40 rounded-full text-white transition-colors">
-        <X size={24} className="md:size-32" />
+        <X className="w-8 h-8 md:w-12 md:h-12" />
       </button>
     </div>
   );
@@ -151,12 +151,12 @@ const WrappedView: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) 
   return (
     <div className="absolute inset-0 z-[200] flex flex-col items-center justify-center p-6 md:p-8 transition-all duration-1000 spotify-ease overflow-hidden" style={{ background: backgrounds[step] }}>
       <button onClick={() => setView(ViewType.HOME)} className="absolute top-4 right-4 md:top-8 md:right-8 z-[210] p-2 hover:bg-white/10 rounded-full text-white transition-colors">
-        <X size={24} className="md:size-32" />
+        <X className="w-8 h-8 md:w-12 md:h-12" />
       </button>
       <div className="w-full max-w-4xl flex flex-col items-center text-center animate-lyrics-appear">
         {step === 0 && (
           <div className="space-y-4 md:space-y-6">
-            <Sparkles size={60} className="mx-auto mb-6 md:mb-8 animate-pulse text-white md:size-80" />
+            <Sparkles className="mx-auto mb-6 md:mb-8 animate-pulse text-white w-20 h-20 md:w-32 md:h-32" />
             <h2 className="text-4xl md:text-8xl font-black tracking-tighter text-white uppercase italic">Your 2024<br/>Wrapped</h2>
             <p className="text-lg md:text-xl font-bold text-white/80 uppercase tracking-widest">A journey through your code</p>
           </div>
@@ -174,7 +174,7 @@ const WrappedView: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) 
             <div className="relative group">
               <img src={stats.topProject.imageUrl} className="w-48 h-48 md:w-80 md:h-80 rounded-lg shadow-2xl mb-4 md:mb-6 border-4 border-white/20 object-cover" alt="Top Project" />
               <div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-[#1DB954] p-3 md:p-4 rounded-full shadow-xl">
-                <Trophy size={20} className="text-white md:size-32" />
+                <Trophy className="text-white w-8 h-8 md:w-12 md:h-12" />
               </div>
             </div>
             <div>
@@ -385,9 +385,9 @@ const App: React.FC = () => {
 
                 <div className="p-4 md:p-8 space-y-12 md:space-y-16 pb-48 md:pb-32 bg-gradient-to-b from-[#181818] to-black">
                   <div className="flex items-center gap-4 md:gap-6">
-                    <button onClick={() => activeProject && handlePlayProject(activeProject)} className="bg-[#1DB954] hover:scale-105 active:scale-95 transition-transform p-3 md:p-4 rounded-full text-black shadow-xl"><Play size={24} fill="currentColor" className="md:size-28" /></button>
+                    <button onClick={() => activeProject && handlePlayProject(activeProject)} className="bg-[#1DB954] hover:scale-105 active:scale-95 transition-transform p-3 md:p-4 rounded-full text-black shadow-xl"><Play size={24} fill="currentColor" className="md:w-7 md:h-7" /></button>
                     <button onClick={() => setView(ViewType.WRAPPED)} className="bg-gradient-to-tr from-[#ff00d4] to-[#00f2ff] px-4 md:px-6 py-1.5 md:py-2 rounded-full text-white text-xs md:text-sm font-bold animate-pulse hover:scale-105 transition-transform">2024 Wrapped</button>
-                    <button className="text-[#b3b3b3] hover:text-white transition-colors"><MoreHorizontal size={24} className="md:size-32" /></button>
+                    <button className="text-[#b3b3b3] hover:text-white transition-colors"><MoreHorizontal size={24} className="md:w-8 md:h-8" /></button>
                   </div>
 
                   {/* Artist Pick */}
@@ -425,7 +425,7 @@ const App: React.FC = () => {
                               alt={exp.company}
                             />
                             <div className="absolute bottom-2 right-2 bg-[#1DB954] p-2 md:p-3 rounded-full text-black opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-150 shadow-xl hidden md:block">
-                              <ListMusic size={16} fill="black" className="md:size-20" />
+                              <ListMusic className="w-4 h-4 md:w-5 md:h-5" fill="black" />
                             </div>
                           </div>
                           <p className="font-bold text-sm md:text-base truncate group-hover:text-[#1DB954] transition-colors duration-300">{exp.company}</p>
@@ -459,14 +459,14 @@ const App: React.FC = () => {
                           <div key={idx} className="flex items-center gap-4 md:gap-8 py-4 px-2 md:px-4 hover:bg-white/5 rounded-lg transition-all group border-b border-white/5 last:border-0">
                             <div className="flex flex-col items-center min-w-[40px] md:min-w-[48px]">
                               <span className="text-[10px] md:text-xs font-bold text-[#b3b3b3] uppercase tracking-widest">{month === "NOW" ? "LIVE" : month}</span>
-                              <span className="text-xl md:text-2xl font-black text-white leading-none">{day === "NOW" ? <Calendar size={18} className="mt-1 md:size-20" /> : day}</span>
+                              <span className="text-xl md:text-2xl font-black text-white leading-none">{day === "NOW" ? <Calendar size={18} className="mt-1 md:w-5 md:h-5" /> : day}</span>
                             </div>
                             <div className="flex flex-col flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-sm md:text-lg group-hover:text-[#1DB954] transition-colors truncate">{tour.event}</span>
                                 {tour.date === "NOW" && <span className="text-[8px] md:text-[10px] font-bold bg-[#1DB954]/20 text-[#1DB954] px-1.5 py-0.5 rounded uppercase tracking-wider">Nearby</span>}
                               </div>
-                              <div className="flex items-center gap-1 text-[#b3b3b3] text-[10px] md:text-sm font-medium truncate"><MapPin size={10} className="md:size-12" /><span>{tour.location}</span></div>
+                              <div className="flex items-center gap-1 text-[#b3b3b3] text-[10px] md:text-sm font-medium truncate"><MapPin size={10} className="md:w-3 md:h-3" /><span>{tour.location}</span></div>
                             </div>
                             <a href={tour.link} target="_blank" rel="noreferrer" className="shrink-0 border border-[#727272] group-hover:border-white hover:scale-105 transition-all px-3 md:px-5 py-1.5 md:py-2 rounded-full text-[9px] md:text-xs font-black uppercase tracking-widest text-white">Tickets</a>
                           </div>
@@ -478,7 +478,7 @@ const App: React.FC = () => {
                   {/* Merch */}
                   <div>
                     <div className="flex items-center gap-2 mb-4 md:mb-6">
-                        <ShoppingBag size={20} className="text-[#1DB954] md:size-24" />
+                        <ShoppingBag className="text-[#1DB954] w-5 h-5 md:w-6 md:h-6" />
                         <h2 className="text-xl md:text-2xl font-bold">Developer Merch</h2>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
@@ -490,35 +490,9 @@ const App: React.FC = () => {
                                   <span className="text-[10px] md:text-xs text-[#b3b3b3] uppercase tracking-wider">{item.type}</span>
                                   <span className="text-xs md:text-sm font-bold text-[#1DB954] mt-1 md:mt-2">{item.price}</span>
                                 </div>
-                                <button className="absolute bottom-16 right-4 md:right-6 p-2 md:p-3 rounded-full bg-[#1DB954] text-black shadow-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all hidden md:block"><ShoppingBag size={18} fill="black" className="md:size-20" /></button>
+                                <button className="absolute bottom-16 right-4 md:right-6 p-2 md:p-3 rounded-full bg-[#1DB954] text-black shadow-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all hidden md:block"><ShoppingBag className="w-4 h-4 md:w-5 md:h-5" fill="black" /></button>
                             </div>
                         ))}
-                    </div>
-                  </div>
-
-                  {/* About / Bio Section */}
-                  <div className="pt-12 md:pt-24 pb-12">
-                    <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">About</h2>
-                    <div className="relative h-[400px] md:h-[600px] rounded-xl overflow-hidden group cursor-pointer">
-                      <img src={DEVELOPER_INFO.profileImage} className="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-1000" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent p-6 md:p-12 flex flex-col justify-end">
-                        <div className="bg-[#3d91f4] w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-4 md:mb-6 shadow-2xl animate-pulse">
-                          <CheckCircle2 size={28} className="text-white md:size-40" fill="white" />
-                        </div>
-                        <h3 className="text-2xl md:text-5xl font-black text-white mb-4 md:mb-6 max-w-2xl leading-tight">Verified Developer {DEVELOPER_INFO.name}</h3>
-                        <p className="text-sm md:text-xl font-bold text-white/90 max-w-3xl line-clamp-3 leading-relaxed mb-6 md:mb-8">{DEVELOPER_INFO.bio}</p>
-                        <div className="flex items-center gap-4 md:gap-6 text-white overflow-x-auto pb-2 scrollbar-hide">
-                           <div className="flex flex-col shrink-0">
-                              <span className="text-2xl md:text-4xl font-black">1.2M+</span>
-                              <span className="text-[8px] md:text-xs font-bold uppercase tracking-widest text-white/60">Lines of Code</span>
-                           </div>
-                           <div className="h-8 md:h-10 w-px bg-white/20 shrink-0"></div>
-                           <div className="flex flex-col shrink-0">
-                              <span className="text-2xl md:text-4xl font-black">500+</span>
-                              <span className="text-[8px] md:text-xs font-bold uppercase tracking-widest text-white/60">GitHub Stars</span>
-                           </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
