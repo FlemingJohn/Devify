@@ -29,14 +29,25 @@ const PlayerBar: React.FC<PlayerBarProps> = ({ currentProject, currentView, setV
               <span className="text-xs md:text-sm font-semibold text-white hover:underline cursor-pointer truncate">{currentProject.title}</span>
               <span className="text-[10px] md:text-[11px] text-[#b3b3b3] hover:underline cursor-pointer truncate">{currentProject.tech.join(', ')}</span>
             </div>
+            {/* Feature 4: Reactive Visualizer */}
+            <div className="flex items-end gap-[2px] h-4 mb-1 shrink-0">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[3px] bg-[#1DB954] animate-visualizer"
+                  style={{ animationDelay: `${i * 0.15}s`, animationDuration: `${0.6 + Math.random() * 0.4}s` }}
+                />
+              ))}
+            </div>
             <ExternalLink size={14} className="hidden md:block text-[#b3b3b3] hover:text-white cursor-pointer ml-2" />
+
           </>
         ) : (
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 md:w-14 md:h-14 bg-[#282828] rounded"></div>
             <div className="flex flex-col gap-1">
-                <div className="w-16 md:w-24 h-2 md:h-3 bg-[#282828] rounded"></div>
-                <div className="w-12 md:w-16 h-1.5 md:h-2 bg-[#282828] rounded"></div>
+              <div className="w-16 md:w-24 h-2 md:h-3 bg-[#282828] rounded"></div>
+              <div className="w-12 md:w-16 h-1.5 md:h-2 bg-[#282828] rounded"></div>
             </div>
           </div>
         )}
@@ -65,23 +76,23 @@ const PlayerBar: React.FC<PlayerBarProps> = ({ currentProject, currentView, setV
       {/* Mobile Right: Just Play/Pause */}
       <div className="md:hidden flex items-center pr-2">
         <div className="text-white p-2 rounded-full active:scale-95 transition-transform cursor-pointer">
-           <Play size={24} fill="currentColor" />
+          <Play size={24} fill="currentColor" />
         </div>
       </div>
 
       {/* Right: Tools (Hidden on mobile) */}
       <div className="hidden md:flex items-center justify-end gap-3 w-[30%] text-[#b3b3b3]">
-        <Mic2 
-          size={16} 
+        <Mic2
+          size={16}
           onClick={toggleLyrics}
-          className={`cursor-pointer transition-colors ${currentView === ViewType.LYRICS ? 'text-[#1DB954]' : 'hover:text-white'}`} 
+          className={`cursor-pointer transition-colors ${currentView === ViewType.LYRICS ? 'text-[#1DB954]' : 'hover:text-white'}`}
         />
         <LayoutList size={16} className="hover:text-white cursor-pointer" />
         <Laptop size={16} className="hover:text-white cursor-pointer" />
         <div className="flex items-center gap-2 group">
           <Volume2 size={16} className="hover:text-white cursor-pointer" />
           <div className="w-20 lg:w-24 h-1 bg-[#4d4d4d] rounded-full overflow-hidden">
-             <div className="h-full bg-white group-hover:bg-[#1DB954] w-2/3"></div>
+            <div className="h-full bg-white group-hover:bg-[#1DB954] w-2/3"></div>
           </div>
         </div>
         <Maximize2 size={16} className="hover:text-white cursor-pointer" />

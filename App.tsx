@@ -4,8 +4,12 @@ import { ChevronLeft, ChevronRight, CheckCircle2, MoreHorizontal, Play, UserCirc
 import Sidebar from './components/Sidebar';
 import PlayerBar from './components/PlayerBar';
 import ProjectRow from './components/ProjectRow';
+import AchievementWall from './components/AchievementWall';
+import LiveSetConsole from './components/LiveSetConsole';
+import ContactPass from './components/ContactPass';
 import { DEVELOPER_INFO, PROJECTS, TECHNICAL_SKILLS, TOUR_DATES, MERCH, EXPERIENCES, HACKATHONS, SOCIAL_LINKS, GLOBAL_ACHIEVEMENTS } from './constants';
 import { Project, Experience, ViewType, Hackathon } from './types';
+
 
 
 const RECENTLY_PLAYED_KEY = 'devify_recently_played';
@@ -155,7 +159,9 @@ const App: React.FC = () => {
   const [headerOpacity, setHeaderOpacity] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [recentlyPlayedIds, setRecentlyPlayedIds] = useState<string[]>([]);
+  const [hoveredColor, setHoveredColor] = useState<string>('#1DB954');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
 
 
   const artistPickProject = useMemo(() => PROJECTS.find(p => p.id === DEVELOPER_INFO.artistPick.projectId), []);
@@ -176,7 +182,13 @@ const App: React.FC = () => {
     });
   };
 
-  useEffect(() => { if (activeProject) addToRecentlyPlayed(activeProject.id); }, [activeProject?.id]);
+  useEffect(() => {
+    if (activeProject) {
+      addToRecentlyPlayed(activeProject.id);
+      if (activeProject.color) setHoveredColor(activeProject.color);
+    }
+  }, [activeProject?.id]);
+
 
   const handleScroll = () => { if (scrollContainerRef.current) setHeaderOpacity(Math.min(scrollContainerRef.current.scrollTop / 300, 1)); };
 
@@ -302,7 +314,12 @@ const App: React.FC = () => {
           <div ref={scrollContainerRef} onScroll={handleScroll} className="flex-1 overflow-y-auto scroll-smooth">
             {(currentView === ViewType.HOME || currentView === ViewType.ARTIST) && (
               <>
-                <div className="relative h-[300px] md:h-[400px] flex items-end p-4 md:p-8" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(18,18,18,1)), url(${DEVELOPER_INFO.profileImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div
+                  className="relative h-[300px] md:h-[400px] flex items-end p-4 md:p-8"
+                  style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(18,18,18,1)), url(${DEVELOPER_INFO.profileImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                  onMouseEnter={() => setHoveredColor('#1DB954')}
+                >
+
                   <div className="flex flex-col gap-2 relative z-10 w-full">
                     <div className="flex flex-wrap items-center gap-3 md:gap-4">
                       <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-2 py-1 rounded-full">
@@ -323,11 +340,15 @@ const App: React.FC = () => {
                     <button className="text-[#b3b3b3] hover:text-white transition-colors"><MoreHorizontal size={24} className="md:w-8 md:h-8" /></button>
                   </div>
 
-                  {/* Artist Pick */}
-                  {artistPickProject && (
+                  {/* Artist Pick & Live Set Console - Feature 1 */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
                     <div className="space-y-4">
                       <h2 className="text-xl md:text-2xl font-bold">Artist Pick</h2>
-                      <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group cursor-pointer max-w-xl" onClick={() => setSelectedProjectDetails(artistPickProject)}>
+                      <div
+                        className="flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group cursor-pointer max-w-xl"
+                        onClick={() => setSelectedProjectDetails(artistPickProject)}
+                        onMouseEnter={() => setHoveredColor(artistPickProject.color || '#1DB954')}
+                      >
                         <img src={artistPickProject.imageUrl} className="w-20 h-20 md:w-24 md:h-24 rounded shadow-xl object-cover" alt="Artist Pick" />
                         <div className="flex flex-col justify-center gap-1">
                           <div className="flex items-center gap-2">
@@ -339,7 +360,9 @@ const App: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  )}
+                    <LiveSetConsole />
+                  </div>
+
 
                   {/* Experience Discography */}
                   <div>
@@ -368,26 +391,10 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Global Achievements - Updated Section */}
-                  <div>
+                  {/* Global Achievements - Feature 3: Achievement Wall */}
+                  <div onMouseEnter={() => setHoveredColor('#ffffff')}>
                     <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Platinum Accolades</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                      {GLOBAL_ACHIEVEMENTS.map(ach => (
-                        <div
-                          key={ach.id}
-                          className="flex items-center gap-4 p-4 rounded-lg bg-gradient-to-r from-white/5 to-transparent border border-white/5 hover:bg-white/10 transition-all group"
-                        >
-                          <div className="bg-[#1DB954]/10 p-3 rounded-lg text-[#1DB954] group-hover:scale-110 transition-transform">
-                            <ach.icon size={24} />
-                          </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="font-bold text-sm md:text-base truncate text-white">{ach.title}</span>
-                            <span className="text-[10px] text-[#b3b3b3] uppercase font-black tracking-widest">{ach.issuer} • {ach.date}</span>
-                            <p className="text-[10px] text-[#b3b3b3] mt-1 line-clamp-1">{ach.description}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <AchievementWall />
                   </div>
 
                   {/* Hackathons - Appears On / Collaborative Compilations */}
@@ -417,14 +424,33 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Popular Tracks - Feature 2: Vinyl Cards */}
                   <div>
                     <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Popular Tracks</h2>
                     <div className="flex flex-col">
                       {PROJECTS.map((project, idx) => (
-                        <ProjectRow key={project.id} index={idx} project={project} onPlay={handlePlayProject} isActive={activeProject?.id === project.id} />
+                        <div
+                          key={project.id}
+                          className="group relative"
+                          onMouseEnter={() => setHoveredColor(project.color || '#1DB954')}
+                        >
+                          <ProjectRow
+                            index={idx}
+                            project={project}
+                            onPlay={handlePlayProject}
+                            isActive={activeProject?.id === project.id}
+                          />
+                          {/* Vinyl Record Slide-out */}
+                          <div className="absolute right-[10%] top-1/2 -translate-y-1/2 w-12 h-12 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:translate-x-12 transition-all duration-500 z-[-1]">
+                            <div className="w-full h-full rounded-full bg-[#121212] border-4 border-[#282828] flex items-center justify-center animate-spin" style={{ animationDuration: '3s' }}>
+                              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: project.color || '#1DB954' }} />
+                            </div>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
+
 
                   {/* On Tour */}
                   <div className="space-y-4 md:space-y-6">
@@ -459,14 +485,14 @@ const App: React.FC = () => {
 
                   {/* Merch */}
                   <div>
-                    <div className="flex items-center gap-2 mb-4 md:mb-6">
-                      <ShoppingBag className="text-[#1DB954] w-5 h-5 md:w-6 md:h-6" />
-                      <h2 className="text-xl md:text-2xl font-bold">Developer Merch</h2>
+                    <div className="flex items-center gap-2 mb-4 md:mb-6 text-[#1DB954]">
+                      <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
+                      <h2 className="text-xl md:text-2xl font-bold text-white">Developer Merch</h2>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                       {MERCH.map(item => (
-                        <div key={item.id} className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] transition-colors cursor-pointer group relative">
-                          <img src={item.imageUrl} className="aspect-square rounded mb-3 md:mb-4 shadow-xl object-cover" />
+                        <div key={item.id} className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] transition-colors cursor-pointer group relative overflow-hidden">
+                          <img src={item.imageUrl} className="aspect-square rounded mb-3 md:mb-4 shadow-xl object-cover group-hover:scale-110 transition-transform duration-500" />
                           <div className="flex flex-col min-w-0">
                             <span className="font-bold text-sm md:text-base truncate">{item.name}</span>
                             <span className="text-[10px] md:text-xs text-[#b3b3b3] uppercase tracking-wider">{item.type}</span>
@@ -477,6 +503,13 @@ const App: React.FC = () => {
                       ))}
                     </div>
                   </div>
+
+                  {/* Backstage Pass Contact Form - Feature 5 */}
+                  <div className="pt-20 md:pt-32" onMouseEnter={() => setHoveredColor('#1DB954')}>
+                    <h2 className="text-3xl md:text-5xl font-black text-center mb-12 md:mb-16 tracking-tighter">WANT TO BOOK A SHOW?</h2>
+                    <ContactPass />
+                  </div>
+
 
                 </div>
               </>
@@ -500,13 +533,30 @@ const App: React.FC = () => {
         </main>
       </div>
       <PlayerBar currentProject={activeProject} currentView={currentView} setView={setView} />
+
+      {/* Dynamic Background Glow - Feature 6 */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 transition-colors duration-1000 overflow-hidden"
+        style={{ background: `radial-gradient(circle at 50% -20%, ${hoveredColor}33 0%, transparent 70%)` }}
+      >
+        <div className="absolute inset-0 backdrop-blur-[120px]" />
+      </div>
+
       <style>{`
         @keyframes spotify-modal-open { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Feature 6 Glassmorphism refinements */
+        .glass-card {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
       `}</style>
     </div>
   );
 };
 
 export default App;
+
