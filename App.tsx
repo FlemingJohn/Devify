@@ -1,102 +1,43 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, CheckCircle2, MoreHorizontal, Play, UserCircle, Search as SearchIcon, X, Share2, Trophy, Sparkles, History, Clock, Mic2, MapPin, ExternalLink, Volume2, ShoppingBag, Calendar, ListMusic, Info, Heart, ArrowRight, Zap, Star } from 'lucide-react';
-import { GoogleGenAI, Modality } from "@google/genai";
 import Sidebar from './components/Sidebar';
 import PlayerBar from './components/PlayerBar';
 import ProjectRow from './components/ProjectRow';
 import { DEVELOPER_INFO, PROJECTS, TECHNICAL_SKILLS, TOUR_DATES, MERCH, EXPERIENCES, HACKATHONS, SOCIAL_LINKS, GLOBAL_ACHIEVEMENTS } from './constants';
 import { Project, Experience, ViewType, Hackathon } from './types';
-import { askGeminiAboutDeveloper } from './services/geminiService';
+
 
 const RECENTLY_PLAYED_KEY = 'devify_recently_played';
 
-// Audio decoding helpers
-function decode(base64: string) {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
 
-async function decodeAudioData(
-  data: Uint8Array,
-  ctx: AudioContext,
-  sampleRate: number,
-  numChannels: number,
-): Promise<AudioBuffer> {
-  const dataInt16 = new Int16Array(data.buffer);
-  const frameCount = dataInt16.length / numChannels;
-  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
-
-  for (let channel = 0; channel < numChannels; channel++) {
-    const channelData = buffer.getChannelData(channel);
-    for (let i = 0; i < frameCount; i++) {
-      channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
-    }
-  }
-  return buffer;
-}
 
 // Search View Component
 const SearchView: React.FC = () => {
   const [query, setQuery] = useState('');
-  const [aiResponse, setAiResponse] = useState<string | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
-
-  const handleAiSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
-    setIsSearching(true);
-    const response = await askGeminiAboutDeveloper(query);
-    setAiResponse(response);
-    setIsSearching(false);
-  };
 
   return (
     <div className="p-4 md:p-8 pt-20 md:pt-24 animate-fade-in pb-32">
       <div className="max-w-3xl mb-8 md:mb-12">
-        <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Search the Dev Brain</h1>
-        <form onSubmit={handleAiSearch} className="relative group">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Browse by Genre</h1>
+        <div className="relative group">
           <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-[#b3b3b3] group-focus-within:text-white transition-colors" size={20} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Ask anything..." 
+            placeholder="Search skills..."
             className="w-full bg-[#242424] hover:bg-[#2a2a2a] focus:bg-[#2a2a2a] text-white rounded-full py-3 px-12 md:px-14 outline-none transition-all border border-transparent focus:border-white/20 text-sm md:text-base"
           />
-          <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#1DB954] text-black p-1.5 rounded-full hover:scale-105 transition-transform">
-             <ArrowRight size={16} />
-          </button>
-        </form>
+        </div>
       </div>
 
-      {isSearching && (
-        <div className="flex items-center gap-3 text-[#b3b3b3] animate-pulse mb-8">
-          <Sparkles size={20} />
-          <span>Gemini is thinking...</span>
-        </div>
-      )}
-
-      {aiResponse && !isSearching && (
-        <div className="bg-white/5 p-4 md:p-6 rounded-lg border border-white/10 animate-slide-up-fade mb-8">
-          <div className="flex items-center gap-2 mb-4 text-[#1DB954]">
-            <Sparkles size={16} />
-            <span className="text-xs font-bold uppercase tracking-widest">AI Recommendation</span>
-          </div>
-          <p className="text-base md:text-lg text-white leading-relaxed">{aiResponse}</p>
-        </div>
-      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
         {TECHNICAL_SKILLS.map(skill => (
           <div key={skill.name} className="aspect-square relative rounded-lg overflow-hidden cursor-pointer group" style={{ backgroundColor: skill.color }}>
-             <h3 className="absolute top-3 left-3 md:top-4 md:left-4 text-xl md:text-2xl font-black text-white">{skill.name}</h3>
-             <skill.icon size={48} className="absolute bottom-[-5%] right-[-5%] rotate-[25deg] text-white/20 group-hover:scale-110 transition-transform md:w-16 md:h-16" />
+            <h3 className="absolute top-3 left-3 md:top-4 md:left-4 text-xl md:text-2xl font-black text-white">{skill.name}</h3>
+            <skill.icon size={48} className="absolute bottom-[-5%] right-[-5%] rotate-[25deg] text-white/20 group-hover:scale-110 transition-transform md:w-16 md:h-16" />
           </div>
         ))}
       </div>
@@ -157,7 +98,7 @@ const WrappedView: React.FC<{ setView: (v: ViewType) => void }> = ({ setView }) 
         {step === 0 && (
           <div className="space-y-4 md:space-y-6">
             <Sparkles className="mx-auto mb-6 md:mb-8 animate-pulse text-white w-20 h-20 md:w-32 md:h-32" />
-            <h2 className="text-4xl md:text-8xl font-black tracking-tighter text-white uppercase italic">Your 2024<br/>Wrapped</h2>
+            <h2 className="text-4xl md:text-8xl font-black tracking-tighter text-white uppercase italic">Your 2024<br />Wrapped</h2>
             <p className="text-lg md:text-xl font-bold text-white/80 uppercase tracking-widest">A journey through your code</p>
           </div>
         )}
@@ -214,8 +155,8 @@ const App: React.FC = () => {
   const [headerOpacity, setHeaderOpacity] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [recentlyPlayedIds, setRecentlyPlayedIds] = useState<string[]>([]);
-  const [isPlayingTTS, setIsPlayingTTS] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
 
   const artistPickProject = useMemo(() => PROJECTS.find(p => p.id === DEVELOPER_INFO.artistPick.projectId), []);
 
@@ -244,42 +185,27 @@ const App: React.FC = () => {
     setView(ViewType.LYRICS);
   };
 
-  const handlePlayGreeting = async () => {
-    if (isPlayingTTS) return;
-    setIsPlayingTTS(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Say cheerfully: Hey there! I'm Alex Jean, a full stack engineer. Welcome to my portfolio. Feel free to explore my latest projects and tracks. Thanks for stopping by!`;
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-preview-tts",
-        contents: [{ parts: [{ text: prompt }] }],
-        config: { responseModalities: [Modality.AUDIO], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } } },
-      });
-      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if (base64Audio) {
-        const outputAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)({sampleRate: 24000});
-        const audioBuffer = await decodeAudioData(decode(base64Audio), outputAudioContext, 24000, 1);
-        const source = outputAudioContext.createBufferSource();
-        source.buffer = audioBuffer;
-        source.connect(outputAudioContext.destination);
-        source.onended = () => setIsPlayingTTS(false);
-        source.start();
-      } else { setIsPlayingTTS(false); }
-    } catch (err) { console.error(err); setIsPlayingTTS(false); }
-  };
 
-  if (isLoading) return <div className="h-screen bg-black flex items-center justify-center"><div className="w-12 h-12 border-4 border-[#1DB954] border-t-transparent rounded-full animate-spin"></div></div>;
+
+  if (isLoading) return (
+    <div className="h-screen bg-black flex items-center justify-center animate-fade-in">
+      <svg viewBox="0 0 24 24" className="w-16 h-16 md:w-20 md:h-20 fill-current text-[#1DB954] animate-pulse">
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.508 17.302c-.216.354-.675.465-1.028.249-2.858-1.746-6.457-2.141-10.697-1.173-.405.092-.812-.162-.905-.568-.092-.405.162-.812.568-.905 4.63-1.059 8.604-.601 11.813 1.358.353.216.464.675.249 1.028v.011zm1.472-3.257c-.272.443-.853.585-1.296.313-3.272-2.012-8.259-2.593-12.127-1.417-.5.152-1.029-.133-1.181-.633-.152-.5.133-1.029.633-1.181 4.417-1.339 9.904-.684 13.662 1.63.443.272.585.853.313 1.296l-.004-.008zm.126-3.4c-3.924-2.331-10.39-2.546-14.161-1.402-.602.183-1.241-.167-1.424-.769-.183-.602.167-1.241.769-1.424 4.331-1.314 11.464-1.054 15.996 1.634.542.321.721 1.024.4 1.566-.321.542-1.024.721-1.566.4l-.014-.005z" />
+      </svg>
+    </div>
+  );
+
 
   return (
     <div className="flex flex-col h-screen bg-black overflow-hidden font-sans relative">
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
         <Sidebar currentView={currentView} setView={setView} />
-        
+
         <main className="flex-1 relative overflow-hidden flex flex-col">
           {currentView === ViewType.WRAPPED && <WrappedView setView={setView} />}
           {currentView === ViewType.LYRICS && <LyricsView project={activeProject} setView={setView} />}
           {currentView === ViewType.SEARCH && <SearchView />}
-          
+
           {/* Experience Tracklist Modal */}
           {selectedExperience && (
             <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 md:p-8 bg-black/95 backdrop-blur-xl animate-fade-in overflow-y-auto">
@@ -325,29 +251,29 @@ const App: React.FC = () => {
           {selectedProjectDetails && (
             <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-md animate-fade-in">
               <div className="bg-[#181818] w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl scale-[0.5] animate-[spotify-modal-open_0.6s_cubic-bezier(0.16,1,0.3,1)_forwards] origin-center opacity-0 overflow-y-auto max-h-screen">
-                 <div className="flex flex-col md:flex-row p-6 md:p-8 gap-6 md:gap-8">
-                    <img src={selectedProjectDetails.imageUrl} className="w-full md:w-64 aspect-square rounded-lg shadow-2xl object-cover" />
-                    <div className="flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                           <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 bg-white/10 rounded">Project Detail</span>
-                        </div>
-                        <h2 className="text-3xl md:text-5xl font-black mb-3 md:mb-4 tracking-tight leading-tight">{selectedProjectDetails.title}</h2>
-                        <p className="text-[#b3b3b3] text-sm md:text-lg leading-relaxed mb-6 md:mb-8">{selectedProjectDetails.longDescription}</p>
-                        <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
-                          {selectedProjectDetails.tech.map(t => (
-                            <span key={t} className="text-[10px] md:text-xs font-bold bg-[#282828] text-white px-2 md:px-3 py-1 rounded-full">{t}</span>
-                          ))}
-                        </div>
+                <div className="flex flex-col md:flex-row p-6 md:p-8 gap-6 md:gap-8">
+                  <img src={selectedProjectDetails.imageUrl} className="w-full md:w-64 aspect-square rounded-lg shadow-2xl object-cover" />
+                  <div className="flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 bg-white/10 rounded">Project Detail</span>
                       </div>
-                      <div className="flex flex-col sm:flex-row items-center gap-4">
-                        <button onClick={() => { handlePlayProject(selectedProjectDetails); setSelectedProjectDetails(null); }} className="w-full sm:w-auto bg-[#1DB954] hover:scale-105 active:scale-95 transition-transform text-black font-black px-8 md:px-10 py-3 md:py-4 rounded-full flex items-center justify-center gap-2">
-                          <Play fill="black" size={18} /> Play Project
-                        </button>
-                        <button onClick={() => setSelectedProjectDetails(null)} className="text-white hover:text-[#b3b3b3] font-bold px-4 py-2">Close</button>
+                      <h2 className="text-3xl md:text-5xl font-black mb-3 md:mb-4 tracking-tight leading-tight">{selectedProjectDetails.title}</h2>
+                      <p className="text-[#b3b3b3] text-sm md:text-lg leading-relaxed mb-6 md:mb-8">{selectedProjectDetails.longDescription}</p>
+                      <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
+                        {selectedProjectDetails.tech.map(t => (
+                          <span key={t} className="text-[10px] md:text-xs font-bold bg-[#282828] text-white px-2 md:px-3 py-1 rounded-full">{t}</span>
+                        ))}
                       </div>
                     </div>
-                 </div>
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <button onClick={() => { handlePlayProject(selectedProjectDetails); setSelectedProjectDetails(null); }} className="w-full sm:w-auto bg-[#1DB954] hover:scale-105 active:scale-95 transition-transform text-black font-black px-8 md:px-10 py-3 md:py-4 rounded-full flex items-center justify-center gap-2">
+                        <Play fill="black" size={18} /> Play Project
+                      </button>
+                      <button onClick={() => setSelectedProjectDetails(null)} className="text-white hover:text-[#b3b3b3] font-bold px-4 py-2">Close</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -357,7 +283,7 @@ const App: React.FC = () => {
               <button className="bg-black/70 p-1.5 rounded-full text-white/50 hover:text-white transition-colors"><ChevronLeft size={20} /></button>
               <button className="bg-black/70 p-1.5 rounded-full text-white/50 hover:text-white transition-colors hidden sm:block"><ChevronRight size={20} /></button>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
                 {SOCIAL_LINKS.map(link => (
@@ -379,15 +305,12 @@ const App: React.FC = () => {
                 <div className="relative h-[300px] md:h-[400px] flex items-end p-4 md:p-8" style={{ backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(18,18,18,1)), url(${DEVELOPER_INFO.profileImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                   <div className="flex flex-col gap-2 relative z-10 w-full">
                     <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                        <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-2 py-1 rounded-full">
-                            <CheckCircle2 size={18} className="text-[#3d91f4]" fill="white" />
-                            <span className="text-[10px] md:text-sm font-medium">Verified Developer</span>
-                        </div>
-                        <button onClick={handlePlayGreeting} className={`flex items-center gap-2 px-2 py-0.5 md:px-3 md:py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all ${isPlayingTTS ? 'animate-pulse text-[#1DB954]' : ''}`}>
-                            <Volume2 className="w-3 h-3 md:w-4 md:h-4" />
-                            <span className="text-[8px] md:text-xs font-bold uppercase tracking-wider">{isPlayingTTS ? 'Speaking...' : 'Listen'}</span>
-                        </button>
+                      <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm px-2 py-1 rounded-full">
+                        <CheckCircle2 size={18} className="text-[#3d91f4]" fill="white" />
+                        <span className="text-[10px] md:text-sm font-medium">Verified Developer</span>
+                      </div>
                     </div>
+
                     <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter mb-2 md:mb-4 leading-none">{DEVELOPER_INFO.name}</h1>
                     <span className="text-xs md:text-base font-semibold text-white/80">{DEVELOPER_INFO.monthlyListeners} monthly visitors</span>
                   </div>
@@ -403,18 +326,18 @@ const App: React.FC = () => {
                   {/* Artist Pick */}
                   {artistPickProject && (
                     <div className="space-y-4">
-                        <h2 className="text-xl md:text-2xl font-bold">Artist Pick</h2>
-                        <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group cursor-pointer max-w-xl" onClick={() => setSelectedProjectDetails(artistPickProject)}>
-                            <img src={artistPickProject.imageUrl} className="w-20 h-20 md:w-24 md:h-24 rounded shadow-xl object-cover" alt="Artist Pick" />
-                            <div className="flex flex-col justify-center gap-1">
-                                <div className="flex items-center gap-2">
-                                    <img src={DEVELOPER_INFO.profileImage} className="w-4 h-4 md:w-5 md:h-5 rounded-full object-cover" />
-                                    <span className="text-[10px] md:text-xs font-medium text-[#b3b3b3]">Posted by {DEVELOPER_INFO.name}</span>
-                                </div>
-                                <h3 className="text-base md:text-xl font-bold">{artistPickProject.title}</h3>
-                                <p className="text-xs md:text-sm text-[#b3b3b3] italic line-clamp-2">"{DEVELOPER_INFO.artistPick.comment}"</p>
-                            </div>
+                      <h2 className="text-xl md:text-2xl font-bold">Artist Pick</h2>
+                      <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group cursor-pointer max-w-xl" onClick={() => setSelectedProjectDetails(artistPickProject)}>
+                        <img src={artistPickProject.imageUrl} className="w-20 h-20 md:w-24 md:h-24 rounded shadow-xl object-cover" alt="Artist Pick" />
+                        <div className="flex flex-col justify-center gap-1">
+                          <div className="flex items-center gap-2">
+                            <img src={DEVELOPER_INFO.profileImage} className="w-4 h-4 md:w-5 md:h-5 rounded-full object-cover" />
+                            <span className="text-[10px] md:text-xs font-medium text-[#b3b3b3]">Posted by {DEVELOPER_INFO.name}</span>
+                          </div>
+                          <h3 className="text-base md:text-xl font-bold">{artistPickProject.title}</h3>
+                          <p className="text-xs md:text-sm text-[#b3b3b3] italic line-clamp-2">"{DEVELOPER_INFO.artistPick.comment}"</p>
                         </div>
+                      </div>
                     </div>
                   )}
 
@@ -423,15 +346,15 @@ const App: React.FC = () => {
                     <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Discography</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                       {EXPERIENCES.map(exp => (
-                        <div 
-                          key={exp.id} 
-                          onClick={() => setSelectedExperience(exp)} 
+                        <div
+                          key={exp.id}
+                          onClick={() => setSelectedExperience(exp)}
                           className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] cursor-pointer group transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)] hover:-translate-y-1"
                         >
                           <div className="relative mb-3 md:mb-4 overflow-hidden rounded-md">
-                            <img 
-                              src={exp.imageUrl} 
-                              className="aspect-square rounded-md shadow-xl mb-0 object-cover group-hover:scale-105 transition-transform duration-500" 
+                            <img
+                              src={exp.imageUrl}
+                              className="aspect-square rounded-md shadow-xl mb-0 object-cover group-hover:scale-105 transition-transform duration-500"
                               alt={exp.company}
                             />
                             <div className="absolute bottom-2 right-2 bg-[#1DB954] p-2 md:p-3 rounded-full text-black opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-150 shadow-xl hidden md:block">
@@ -450,12 +373,12 @@ const App: React.FC = () => {
                     <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Platinum Accolades</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                       {GLOBAL_ACHIEVEMENTS.map(ach => (
-                        <div 
-                          key={ach.id} 
+                        <div
+                          key={ach.id}
                           className="flex items-center gap-4 p-4 rounded-lg bg-gradient-to-r from-white/5 to-transparent border border-white/5 hover:bg-white/10 transition-all group"
                         >
                           <div className="bg-[#1DB954]/10 p-3 rounded-lg text-[#1DB954] group-hover:scale-110 transition-transform">
-                             <ach.icon size={24} />
+                            <ach.icon size={24} />
                           </div>
                           <div className="flex flex-col min-w-0">
                             <span className="font-bold text-sm md:text-base truncate text-white">{ach.title}</span>
@@ -472,14 +395,14 @@ const App: React.FC = () => {
                     <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Appears On (Hackathons)</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
                       {HACKATHONS.map(hack => (
-                        <div 
-                          key={hack.id} 
+                        <div
+                          key={hack.id}
                           className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] cursor-pointer group transition-all duration-300"
                         >
                           <div className="relative mb-3 md:mb-4 overflow-hidden rounded-md">
-                            <img 
-                              src={hack.imageUrl} 
-                              className="aspect-square rounded-md shadow-xl mb-0 object-cover group-hover:scale-105 transition-transform duration-500" 
+                            <img
+                              src={hack.imageUrl}
+                              className="aspect-square rounded-md shadow-xl mb-0 object-cover group-hover:scale-105 transition-transform duration-500"
                               alt={hack.name}
                             />
                             <div className="absolute top-2 left-2 bg-[#1DB954]/90 backdrop-blur-sm p-1.5 rounded-full text-black shadow-lg">
@@ -537,21 +460,21 @@ const App: React.FC = () => {
                   {/* Merch */}
                   <div>
                     <div className="flex items-center gap-2 mb-4 md:mb-6">
-                        <ShoppingBag className="text-[#1DB954] w-5 h-5 md:w-6 md:h-6" />
-                        <h2 className="text-xl md:text-2xl font-bold">Developer Merch</h2>
+                      <ShoppingBag className="text-[#1DB954] w-5 h-5 md:w-6 md:h-6" />
+                      <h2 className="text-xl md:text-2xl font-bold">Developer Merch</h2>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-                        {MERCH.map(item => (
-                            <div key={item.id} className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] transition-colors cursor-pointer group relative">
-                                <img src={item.imageUrl} className="aspect-square rounded mb-3 md:mb-4 shadow-xl object-cover" />
-                                <div className="flex flex-col min-w-0">
-                                  <span className="font-bold text-sm md:text-base truncate">{item.name}</span>
-                                  <span className="text-[10px] md:text-xs text-[#b3b3b3] uppercase tracking-wider">{item.type}</span>
-                                  <span className="text-xs md:text-sm font-bold text-[#1DB954] mt-1 md:mt-2">{item.price}</span>
-                                </div>
-                                <button className="absolute bottom-16 right-4 md:right-6 p-2 md:p-3 rounded-full bg-[#1DB954] text-black shadow-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all hidden md:block"><ShoppingBag className="w-4 h-4 md:w-5 md:h-5" fill="black" /></button>
-                            </div>
-                        ))}
+                      {MERCH.map(item => (
+                        <div key={item.id} className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] transition-colors cursor-pointer group relative">
+                          <img src={item.imageUrl} className="aspect-square rounded mb-3 md:mb-4 shadow-xl object-cover" />
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-bold text-sm md:text-base truncate">{item.name}</span>
+                            <span className="text-[10px] md:text-xs text-[#b3b3b3] uppercase tracking-wider">{item.type}</span>
+                            <span className="text-xs md:text-sm font-bold text-[#1DB954] mt-1 md:mt-2">{item.price}</span>
+                          </div>
+                          <button className="absolute bottom-16 right-4 md:right-6 p-2 md:p-3 rounded-full bg-[#1DB954] text-black shadow-2xl opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all hidden md:block"><ShoppingBag className="w-4 h-4 md:w-5 md:h-5" fill="black" /></button>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
@@ -565,9 +488,9 @@ const App: React.FC = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
                   {PROJECTS.map(p => (
                     <div key={p.id} onClick={() => setSelectedProjectDetails(p)} className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] cursor-pointer group">
-                        <img src={p.imageUrl} className="aspect-square rounded mb-3 md:mb-4 object-cover" />
-                        <p className="font-bold text-sm md:text-base truncate">{p.title}</p>
-                        <p className="text-[10px] md:text-sm text-[#b3b3b3]">Project • {p.tech[0]}</p>
+                      <img src={p.imageUrl} className="aspect-square rounded mb-3 md:mb-4 object-cover" />
+                      <p className="font-bold text-sm md:text-base truncate">{p.title}</p>
+                      <p className="text-[10px] md:text-sm text-[#b3b3b3]">Project • {p.tech[0]}</p>
                     </div>
                   ))}
                 </div>
