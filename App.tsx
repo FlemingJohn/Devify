@@ -5,8 +5,9 @@ import Sidebar from './components/Sidebar';
 import PlayerBar from './components/PlayerBar';
 import ProjectRow from './components/ProjectRow';
 import AchievementWall from './components/AchievementWall';
-import LiveSetConsole from './components/LiveSetConsole';
+import Gramophone from './components/Gramophone';
 import ContactPass from './components/ContactPass';
+
 import { DEVELOPER_INFO, PROJECTS, TECHNICAL_SKILLS, TOUR_DATES, MERCH, EXPERIENCES, HACKATHONS, SOCIAL_LINKS, GLOBAL_ACHIEVEMENTS } from './constants';
 import { Project, Experience, ViewType, Hackathon } from './types';
 
@@ -360,8 +361,9 @@ const App: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <LiveSetConsole />
+                    <Gramophone />
                   </div>
+
 
 
                   {/* Experience Discography */}
