@@ -372,9 +372,17 @@ const App: React.FC = () => {
                         <div
                           key={exp.id}
                           onClick={() => setSelectedExperience(exp)}
-                          className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] cursor-pointer group transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)] hover:-translate-y-1"
+                          className="bg-[#181818] p-3 md:p-4 rounded-lg hover:bg-[#282828] cursor-pointer group transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6)] hover:-translate-y-1 relative"
+                          onMouseEnter={() => setHoveredColor(exp.color || '#1DB954')}
                         >
-                          <div className="relative mb-3 md:mb-4 overflow-hidden rounded-md">
+                          {/* Feature 2: Vinyl Record Slide-out on Square Cards */}
+                          <div className="absolute right-0 top-4 w-20 h-20 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:translate-x-12 transition-all duration-500 z-[-1]">
+                            <div className="w-full h-full rounded-full bg-[#121212] border-8 border-[#282828] flex items-center justify-center animate-spin" style={{ animationDuration: '3s' }}>
+                              <div className="w-6 h-6 rounded-full" style={{ backgroundColor: exp.color || '#1DB954' }} />
+                            </div>
+                          </div>
+
+                          <div className="relative mb-3 md:mb-4 overflow-hidden rounded-md z-10 bg-[#181818]">
                             <img
                               src={exp.imageUrl}
                               className="aspect-square rounded-md shadow-xl mb-0 object-cover group-hover:scale-105 transition-transform duration-500"
@@ -384,9 +392,10 @@ const App: React.FC = () => {
                               <ListMusic className="w-4 h-4 md:w-5 md:h-5" fill="black" />
                             </div>
                           </div>
-                          <p className="font-bold text-sm md:text-base truncate group-hover:text-[#1DB954] transition-colors duration-300">{exp.company}</p>
-                          <p className="text-[10px] md:text-sm text-[#b3b3b3]">{exp.period} • Album</p>
+                          <p className="font-bold text-sm md:text-base truncate group-hover:text-[#1DB954] transition-colors duration-300 relative z-10">{exp.company}</p>
+                          <p className="text-[10px] md:text-sm text-[#b3b3b3] relative z-10">{exp.period} • Album</p>
                         </div>
+
                       ))}
                     </div>
                   </div>
@@ -424,7 +433,7 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Popular Tracks - Feature 2: Vinyl Cards */}
+                  {/* Popular Tracks */}
                   <div>
                     <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Popular Tracks</h2>
                     <div className="flex flex-col">
@@ -440,19 +449,34 @@ const App: React.FC = () => {
                             onPlay={handlePlayProject}
                             isActive={activeProject?.id === project.id}
                           />
-                          {/* Vinyl Record Slide-out */}
-                          <div className="absolute right-[10%] top-1/2 -translate-y-1/2 w-12 h-12 pointer-events-none opacity-0 group-hover:opacity-100 group-hover:translate-x-12 transition-all duration-500 z-[-1]">
-                            <div className="w-full h-full rounded-full bg-[#121212] border-4 border-[#282828] flex items-center justify-center animate-spin" style={{ animationDuration: '3s' }}>
-                              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: project.color || '#1DB954' }} />
-                            </div>
-                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
 
 
+
+                  {/* Top Genres - Feature: Skills on Home */}
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 hover:underline cursor-pointer">Top Genres (Skills)</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+                      {TECHNICAL_SKILLS.slice(0, 6).map(skill => (
+                        <div
+                          key={skill.name}
+                          className="aspect-square relative rounded-lg overflow-hidden cursor-pointer group hover:scale-105 transition-transform"
+                          style={{ backgroundColor: skill.color }}
+                          onMouseEnter={() => setHoveredColor(skill.color)}
+                        >
+                          <h3 className="absolute top-3 left-3 md:top-4 md:left-4 text-sm md:text-lg font-black text-white">{skill.name}</h3>
+                          <skill.icon size={32} className="absolute bottom-2 right-2 rotate-[15deg] text-white/20 group-hover:scale-110 transition-transform md:w-12 md:h-12" />
+
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* On Tour */}
+
                   <div className="space-y-4 md:space-y-6">
                     <div>
                       <h2 className="text-xl md:text-2xl font-bold tracking-tight">On Tour</h2>
@@ -536,10 +560,10 @@ const App: React.FC = () => {
 
       {/* Dynamic Background Glow - Feature 6 */}
       <div
-        className="fixed inset-0 pointer-events-none z-0 transition-colors duration-1000 overflow-hidden"
+        className="fixed inset-0 pointer-events-none z-[-1] transition-colors duration-1000 overflow-hidden"
         style={{ background: `radial-gradient(circle at 50% -20%, ${hoveredColor}33 0%, transparent 70%)` }}
       >
-        <div className="absolute inset-0 backdrop-blur-[120px]" />
+        <div className="absolute inset-0 blur-[120px]" />
       </div>
 
       <style>{`

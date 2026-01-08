@@ -24,22 +24,26 @@ const PlayerBar: React.FC<PlayerBarProps> = ({ currentProject, currentView, setV
       <div className="flex items-center gap-3 md:gap-4 w-[60%] md:w-[30%]">
         {currentProject ? (
           <>
-            <img src={currentProject.imageUrl} alt={currentProject.title} className="w-10 h-10 md:w-14 md:h-14 rounded shadow-lg object-cover" />
+            <div className="relative group shrink-0">
+              <img src={currentProject.imageUrl} alt={currentProject.title} className="w-10 h-10 md:w-14 md:h-14 rounded shadow-lg object-cover" />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded">
+                <div className="flex items-end gap-[2px] h-4 mb-0.5">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-[3px] bg-[#1DB954] animate-visualizer"
+                      style={{ animationDelay: `${i * 0.15}s`, animationDuration: `${0.6 + Math.random() * 0.4}s` }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
             <div className="flex flex-col min-w-0">
               <span className="text-xs md:text-sm font-semibold text-white hover:underline cursor-pointer truncate">{currentProject.title}</span>
               <span className="text-[10px] md:text-[11px] text-[#b3b3b3] hover:underline cursor-pointer truncate">{currentProject.tech.join(', ')}</span>
             </div>
-            {/* Feature 4: Reactive Visualizer */}
-            <div className="flex items-end gap-[2px] h-4 mb-1 shrink-0">
-              {[...Array(4)].map((_, i) => (
-                <div
-                  key={i}
-                  className="w-[3px] bg-[#1DB954] animate-visualizer"
-                  style={{ animationDelay: `${i * 0.15}s`, animationDuration: `${0.6 + Math.random() * 0.4}s` }}
-                />
-              ))}
-            </div>
             <ExternalLink size={14} className="hidden md:block text-[#b3b3b3] hover:text-white cursor-pointer ml-2" />
+
 
           </>
         ) : (
